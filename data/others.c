@@ -1,16 +1,16 @@
 /*
 
- FIRE_ANIM.H
+ OTHERS.C
 
- Include File.
+ Tile Source File.
 
  Info:
   Form                 : All tiles as one unit.
   Format               : Gameboy 4 color.
   Compression          : None.
   Counter              : None.
-  Tile size            : 16 x 16
-  Tiles                : 0 to 2
+  Tile size            : 8 x 8
+  Tiles                : 0 to 0
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,10 +22,11 @@
 
 */
 
-
-/* Bank of tiles. */
-#define FireAnimBank 0
 /* Start of tile array. */
-extern unsigned char FireAnim[];
+unsigned char OthersTile[] =
+{
+  0x7E,0x7E,0x81,0xFF,0xA5,0xFF,0xA5,0xFF,
+  0x81,0xFF,0x81,0xFF,0x81,0xFF,0x7E,0x7E
+};
 
-/* End of FIRE_ANIM.H */
+/* End of OTHERS.C */

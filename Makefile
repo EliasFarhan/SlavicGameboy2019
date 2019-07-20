@@ -2,7 +2,7 @@ CC	= /opt/gbdk/bin/lcc -Wa-l -Wl-m -Wl-j
 
 BINS	= SGJ.gb
 SOURCE =  src/math_utility.o src/main.o src/game_screen.o
-ASSETS = data/test.o data/fire_anim.o
+ASSETS = data/bg.o data/fire_anim.o data/player_head.o data/others.o
 
 all:	  $(SOURCE) $(ASSETS) $(BINS)
 
