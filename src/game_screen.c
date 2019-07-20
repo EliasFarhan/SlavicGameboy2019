@@ -3,9 +3,11 @@
 #include "../data/fire_anim.h"
 #include "../data/bg.h"
 #include "../data/others.h"
+#include "../data/follower.h"
 #include "game_screen.h"
 #include "globals.h"
 #include "math_utility.h"
+#include "src/gbt_player.h"
 
 struct Player
 {
@@ -26,7 +28,7 @@ struct Other
   BYTE v_y;
 };
 #define OTHERS_NMB 5
-
+extern const unsigned char * song_Data[];
 
 struct Player player;
 struct Other others[OTHERS_NMB];
@@ -34,6 +36,7 @@ UBYTE o_x[OTHERS_NMB] =
 {12,34, 56, 78, 128};
 UBYTE o_y[OTHERS_NMB] =
 {134,10,22,240,6};
+
 void animate()
 {
   UBYTE sprite_index = 0, i;
@@ -61,6 +64,7 @@ void init_game()
     set_sprite_data(0x0U,4U, PlayerHeadSprite);
     set_sprite_data(0x4,0x1, OthersTile);
     set_sprite_data(0x5U, 12U, FireAnim);
+    set_sprite_data(17U, 1U, FollowerTile);
     for(i = 0; i != 8U; i++)
     {
       for(j = 0; j !=8;j++)
@@ -92,15 +96,26 @@ void init_game()
     }
 }
 
+UBYTE px [8];
+UBYTE py [8];
+
 void move_player()
 {
+  UBYTE i;
+  for(i = 1; i != 8; i++)
+  {
+    px[i-1] = px[i];
+    py[i-1] = py[i];
+  }
+  px[7] = player.pos_x;
+  py[7] = player.pos_y;
   player.pos_x += player.v_x;
   player.pos_y += player.v_y;
 }
 #define OTHER_MAX_DISTANCE 32
 void move_others()
 {
-  UBYTE i;
+  BYTE i;
   WORD dist_x;
   WORD dist_y;
   for(i = 0u; i != OTHERS_NMB;i++)
@@ -113,8 +128,8 @@ void move_others()
     dist_y -= (WORD) others[i].pos_y;
     if(dist_x+dist_y < OTHER_MAX_DISTANCE && dist_x+dist_y > -OTHER_MAX_DISTANCE)
     {
-      others[i].v_x = (dist_x < OTHER_MAX_DISTANCE) && (dist_x > -OTHER_MAX_DISTANCE) ? (dist_x < 0 ? 1 : -1) : 0;
-      others[i].v_y = (dist_y < OTHER_MAX_DISTANCE) && (dist_y > -OTHER_MAX_DISTANCE) ? (dist_y < 0 ? 1 : -1) : 0;
+      others[i].v_x = (BYTE)(dist_x < OTHER_MAX_DISTANCE + i) && (dist_x > -OTHER_MAX_DISTANCE - i) ? (dist_x < 0 ? i+1 : -1-i) : 0;
+      others[i].v_y = (BYTE)(dist_y < OTHER_MAX_DISTANCE + i) && (dist_y > -OTHER_MAX_DISTANCE - i) ? (dist_y < 0 ? i+1 : -1-i) : 0;
     }
     else
     {
@@ -130,8 +145,9 @@ void move_others()
 void game_screen()
 {
   	UBYTE keys = 0;
-
-
+	  SWITCH_ROM_MBC1(2);
+    gbt_play(song_Data, 2, 7);
+    gbt_loop(0);
     enable_interrupts();
   	while(1)
   	{
@@ -167,6 +183,6 @@ void game_screen()
       SCX_REG = player.pos_x-(SCSZX>>1);
       SCY_REG = player.pos_y-(SCSZY>>1);
       animate();
-
+      gbt_update();
     }
 }
